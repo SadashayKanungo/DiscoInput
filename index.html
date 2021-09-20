@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DISCO INPUT</title>
+    <meta charset="utf-8">
+    <style>
+        body{text-align: center; background-color: #cccccc;font-family:Georgia, 'Times New Roman', Times, serif;}
+        h1{margin:2%;}
+        div{display:inline-grid;grid-template-columns: 1fr 3fr;}
+        textarea{display:inline-block;margin:0% 5%;padding:5%;height:100%;border:3px solid #222222;font-size:1.25rem;font-family:monospace;}
+        table{display:inline-block;margin-top:0%;;}
+        td{border:2px solid #222222;padding:3% 0%;font-family: monospace;}
+    </style>
+</head>
+<body>
+    <h1>DISCO INPUT</h1>
+    <div>
+        <table>
+            <tr><th>KEY</th><th>INPUT</th></tr>
+            <tr><td><strong>_</strong></td><td>(Tab)</td></tr>
+            <tr><td><strong>!</strong></td><td><strong>¬</strong></td></tr>
+            <tr><td><strong>|</strong></td><td><strong>⋁</strong></td></tr>
+            <tr><td><strong>&</strong></td><td><strong>∧</strong></td></tr>
+            <tr><td><strong>-</strong></td><td><strong>→</strong></td></tr>
+            <tr><td><strong>=</strong></td><td><strong>↔</strong></td></tr>
+            <tr><td><strong>[</strong></td><td><strong>∀</strong></td></tr>
+            <tr><td><strong>]</strong></td><td><strong>∃</strong></td></tr>
+            <tr><td><strong>@</strong></td><td>"Assumption"</td></tr>
+            <tr><td><strong>#</strong></td><td>"Hypothesis"</td></tr>
+        </table>
+        <textarea id="text">1. </textarea>
+    </div>
+
+    <script>
+        text = document.querySelector('#text');
+        text.addEventListener('keypress', updateValue);
+
+        function updateValue(e) {
+            e.preventDefault();
+            text.value += parse(e.key);
+        }
+        
+        function parse(char){
+            if(char === 'Enter'){
+                let lineNo = text.value.split('\n').length;
+                return `\n${lineNo+1}. `;
+            }
+
+            const symbols = {
+                '_' : '\t', //tab
+                '!' : '¬', //not
+                '|' : '⋁', //or
+                '&' : '∧', //and
+                '-' : '→', //implies
+                '=' : '↔', //double implies
+                '[' : '∀', //for all
+                ']' : '∃', //there exists
+                '@' : 'Assumption', //assumption
+                '#' : 'Hypothesis', //hypothesis
+            }
+
+            return symbols[char] || char;    
+        }
+    </script>
+</body>
+</html>
