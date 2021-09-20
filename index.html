@@ -7,7 +7,10 @@
         body{text-align: center; background-color: #cccccc;font-family:Georgia, 'Times New Roman', Times, serif;}
         h1{margin:2%;}
         #main{display:inline-grid;grid-template-columns: 1fr 3fr;}
-        textarea{display:inline-block;margin:0% 5%;padding:2%;height:80%;border:3px solid #222222;font-size:1.25rem;font-family:monospace;}
+        textarea{
+            display:inline-block;margin:0% 5%;padding:2%;height:80%;border:3px solid #222222;font-size:1.25rem;font-family:monospace;
+            -moz-tab-size : 4;-o-tab-size : 4;tab-size : 4;
+        }
         table{display:inline-block;margin-top:0%;;}
         td{border:2px solid #222222;padding:3% 0%;font-family: monospace;}
         button{margin-top:5%;padding:3%;border:2px solid #222222;border-radius: 10px;background-color: #eeeeee;}
@@ -21,11 +24,11 @@
         <table>
             <tr><th>KEY</th><th>INPUT</th></tr>
             <tr><td><strong>_</strong></td><td>(Tab)</td></tr>
-            <tr><td><strong>!</strong></td><td><strong>¬</strong></td></tr>
-            <tr><td><strong>|</strong></td><td><strong>⋁</strong></td></tr>
+            <tr><td><strong>'</strong></td><td><strong>¬</strong></td></tr>
             <tr><td><strong>&</strong></td><td><strong>∧</strong></td></tr>
-            <tr><td><strong>-</strong></td><td><strong>→</strong></td></tr>
-            <tr><td><strong>=</strong></td><td><strong>↔</strong></td></tr>
+            <tr><td><strong>*</strong></td><td><strong>∨</strong></td></tr>
+            <tr><td><strong>-</strong></td><td><strong>⟶</strong></td></tr>
+            <tr><td><strong>=</strong></td><td><strong>⟷</strong></td></tr>
             <tr><td><strong>[</strong></td><td><strong>∀</strong></td></tr>
             <tr><td><strong>]</strong></td><td><strong>∃</strong></td></tr>
             <tr><td><strong>@</strong></td><td>"Assumption"</td></tr>
@@ -34,16 +37,51 @@
         
         <button onclick="copy()"><strong>COPY TEXT</strong></button>
     </div>
-    <textarea id="text">1. </textarea>
+    <textarea id="text" spellcheck="false">1. </textarea>
     </div>
 
     <script>
         text = document.querySelector('#text');
         text.addEventListener('keypress', updateValue);
+        text.addEventListener('paste', handlePaste);
+
+        function handlePaste(e){
+            window.setTimeout(()=>{
+                let startpos = e.target.selectionStart;
+                let endpos = e.target.selectionEnd;
+                e.target.value = rectify(e.target.value);
+                e.target.setSelectionRange(startpos, endpos);
+            }, 100);
+        }
 
         function updateValue(e) {
             e.preventDefault();
-            text.value += parse(e.key);
+            let startpos = e.target.selectionStart;
+            let endpos = e.target.selectionEnd;
+            if(startpos !== endpos){
+                text.value = text.value.slice(0,startpos) + text.value.slice(endpos);
+            }
+            let pos = startpos;
+            let input = parse(e.key);
+            text.value = rectify(text.value.slice(0,pos) + input + text.value.slice(pos));
+            e.target.setSelectionRange(pos + input.length, pos + input.length);
+        }
+
+        function rectify(str){
+            let lineno = 1;
+            let newstr = '';
+            for (let i=0; i<str.length; i++){
+                if(str[i] === '\n'){
+                    lineno++;
+                    i = str.indexOf(' ',i);
+                    let x = `\n${lineno}. `;
+                    newstr += x;
+                }
+                else{
+                    newstr += parse(str[i]);
+                }
+            }
+            return newstr;
         }
         
         function parse(char){
@@ -54,11 +92,11 @@
 
             const symbols = {
                 '_' : '\t', //tab
-                '!' : '¬', //not
-                '|' : '⋁', //or
+                '\'' : '¬', //not
+                '*' : '∨', //or
                 '&' : '∧', //and
-                '-' : '→', //implies
-                '=' : '↔', //double implies
+                '-' : '⟶', //implies
+                '=' : '⟷', //double implies
                 '[' : '∀', //for all
                 ']' : '∃', //there exists
                 '@' : 'Assumption', //assumption
