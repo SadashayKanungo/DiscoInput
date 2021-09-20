@@ -10,6 +10,8 @@
         textarea{display:inline-block;margin:0% 5%;padding:5%;height:100%;border:3px solid #222222;font-size:1.25rem;font-family:monospace;}
         table{display:inline-block;margin-top:0%;;}
         td{border:2px solid #222222;padding:3% 0%;font-family: monospace;}
+        button{margin-top:5%;padding:3%;border:2px solid #222222;border-radius: 10px;background-color: #eeeeee;}
+        button:hover{background-color: #aaa;}
     </style>
 </head>
 <body>
@@ -29,6 +31,7 @@
             <tr><td><strong>#</strong></td><td>"Hypothesis"</td></tr>
         </table>
         <textarea id="text">1. </textarea>
+        <button onclick="copy()"><strong>COPY TEXT</strong></button>
     </div>
 
     <script>
@@ -60,6 +63,13 @@
             }
 
             return symbols[char] || char;    
+        }
+
+        function copy() {
+            text.select();
+            text.setSelectionRange(0, 99999); /* For mobile devices */
+            navigator.clipboard.writeText(text.value);
+            //alert("Copied the text: " + text.value);
         }
     </script>
 </body>
